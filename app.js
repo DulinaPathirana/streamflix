@@ -1,74 +1,77 @@
-// StreamFlix Frontend
-let SERVER_URL = '';
+// StreamFlix Frontend - Auto-connect to NAS
+const SERVER_URL = 'http://192.168.1.49:3000';
 
-const serverModal = document.getElementById('serverModal');
-const serverBtn = document.getElementById('serverBtn');
-const serverForm = document.getElementById('serverForm');
-const closeBtns = document.querySelectorAll('.close');
 const playerModal = document.getElementById('playerModal');
 const videoPlayer = document.getElementById('videoPlayer');
 const navbar = document.querySelector('.navbar');
 
-serverBtn.addEventListener('click', () => {
-    serverModal.classList.add('active');
-    serverModal.style.display = 'flex';
-});
-
+// Close player modal
+const closeBtns = document.querySelectorAll('.close');
 closeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        serverModal.style.display = 'none';
         playerModal.style.display = 'none';
         videoPlayer.pause();
     });
 });
 
-serverForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const serverUrl = document.getElementById('serverUrl').value;
-    const status = document.getElementById('connectionStatus');
-    status.textContent = 'Connecting...';
-    try {
-        const res = await fetch(`${serverUrl}/api/health`);
-        if (res.ok) {
-            SERVER_URL = serverUrl;
-            status.textContent = 'Connected!';
-            status.classList.add('success');
-            await loadMedia();
-            setTimeout(() => serverModal.style.display = 'none', 1500);
-        }
-    } catch (err) {
-        status.textContent = 'Failed to connect';
-        status.classList.add('error');
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
     }
 });
 
+// Load media on page load
 async function loadMedia() {
-    const res = await fetch(`${SERVER_URL}/api/media`);
-    const data = await res.json();
-    displayMedia(data.movies, 'movie-posters');
-    displayMedia(data.series, 'series-posters');
-    displayMedia(data.documentaries, 'doc-posters');
+    try {
+        const res = await fetch(`${SERVER_URL}/api/media`);
+        const data = await res.json();
+        displayMedia(data);
+    } catch (err) {
+        console.error('Failed to load media:', err);
+        document.getElementById('moviesRow').innerHTML = `<p style="color: white; padding: 20px;">Failed to connect to media server. Please ensure server is running at ${SERVER_URL}</p>`;
+    }
 }
 
-function displayMedia(items, id) {
-    const container = document.getElementById(id);
-    container.innerHTML = '';
-    items.forEach(item => {
-        const poster = document.createElement('div');
-        poster.className = 'poster';
-        poster.innerHTML = `<div class="poster-info"><div class="poster-title">${item.title}</div></div>`;
-        poster.onclick = () => playVideo(item);
-        container.appendChild(poster);
+function displayMedia(mediaData) {
+    const moviesRow = document.getElementById('moviesRow');
+    const seriesRow = document.getElementById('seriesRow');
+    const docsRow = document.getElementById('docsRow');
+
+    moviesRow.innerHTML = '';
+    seriesRow.innerHTML = '';
+    docsRow.innerHTML = '';
+
+    mediaData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'media-card';
+        card.innerHTML = `
+            <div class="media-poster">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="media-title">${item.title}</div>
+        `;
+
+        card.onclick = () => playVideo(item);
+
+        if (item.category === 'movie') {
+            moviesRow.appendChild(card);
+        } else if (item.category === 'series') {
+            seriesRow.appendChild(card);
+        } else if (item.category === 'documentary') {
+            docsRow.appendChild(card);
+        }
     });
 }
 
 function playVideo(item) {
-    videoPlayer.src = `${SERVER_URL}/api/stream/${encodeURIComponent(item.filename)}`;
-    document.getElementById('playerTitle').textContent = item.title;
+    const videoUrl = `${SERVER_URL}/api/stream/${encodeURIComponent(item.path)}`;
+    videoPlayer.src = videoUrl;
     playerModal.style.display = 'flex';
     videoPlayer.play();
 }
 
-window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 100);
-});
+// Auto-load media on page load
+window.addEventListener('DOMContentLoaded', loadMedia);
