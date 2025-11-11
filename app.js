@@ -47,11 +47,13 @@ function displayMedia(mediaData) {
     mediaData.forEach(item => {
         const card = document.createElement('div');
         card.className = 'media-card';
-        card.innerHTML = `
-            <div class="media-poster">
+        card.innerHTML = ``
+            <div class="media-poster" style="background-image: url('${item.poster || 'https://via.placeholder.com/300x450?text=No+Poster'}');">
                 <div class="play-btn">▶</div>
+                ${item.rating ? `<div class="rating">⭐ ${item.rating.toFixed(1)}</div>` : ''}
             </div>
             <div class="media-title">${item.title}</div>
+            ${item.year ? `<div class="media-year">${item.year}</div>` : ''}
         `;
 
         card.onclick = () => playVideo(item);
