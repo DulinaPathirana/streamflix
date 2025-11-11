@@ -17,11 +17,10 @@
                 <li><a href="#series">Series</a></li>
                 <li><a href="#my-list">My List</a></li>
             </ul>
-            <div class="nav-right">
-                <button class="btn-server" id="serverBtn">Connect Server</button>
-                <div class="profile">
-                    <img src="https://via.placeholder.com/40" alt="Profile">
-                </div>
+        </div>
+        <div class="nav-right">
+            <div class="profile">
+                <img src="https://via.placeholder.com/40" alt="Profile">
             </div>
         </div>
     </nav>
@@ -30,10 +29,10 @@
     <div class="hero" id="hero">
         <div class="hero-content">
             <h2 class="hero-title">Featured Content</h2>
-            <p class="hero-description">Connect your local server to start streaming your media collection</p>
+            <p class="hero-description">Your media library is automatically connected and ready to stream.</p>
             <div class="hero-buttons">
                 <button class="btn btn-play">▶ Play</button>
-                <button class="btn btn-info">ℹ More Info</button>
+                <button class="btn btn-info">i More Info</button>
             </div>
         </div>
         <div class="hero-fade"></div>
@@ -47,39 +46,15 @@
         </div>
         <div class="row" id="movies">
             <h3>Movies</h3>
-            <div class="row-posters" id="movie-posters"></div>
+            <div class="row-posters" id="moviesRow"></div>
         </div>
         <div class="row" id="series">
             <h3>TV Series</h3>
-            <div class="row-posters" id="series-posters"></div>
+            <div class="row-posters" id="seriesRow"></div>
         </div>
         <div class="row" id="documentaries">
             <h3>Documentaries</h3>
-            <div class="row-posters" id="doc-posters"></div>
-        </div>
-    </div>
-
-    <!-- Server Connection Modal -->
-    <div id="serverModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Connect to Media Server</h2>
-            <form id="serverForm">
-                <div class="form-group">
-                    <label for="serverUrl">Server URL:</label>
-                    <input type="text" id="serverUrl" placeholder="http://localhost:3000" required>
-                </div>
-                <div class="form-group">
-                    <label for="serverPath">Media Folder Path:</label>
-                    <input type="text" id="serverPath" placeholder="/path/to/media" required>
-                </div>
-                <div class="form-group">
-                    <label for="apiKey">API Key (Optional):</label>
-                    <input type="text" id="apiKey" placeholder="Your API key">
-                </div>
-                <button type="submit" class="btn btn-connect">Connect</button>
-            </form>
-            <div id="connectionStatus"></div>
+            <div class="row-posters" id="docsRow"></div>
         </div>
     </div>
 
